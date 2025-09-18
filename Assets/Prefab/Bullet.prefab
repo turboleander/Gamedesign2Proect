@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 9038154235495908497}
   - component: {fileID: 2380281877869232496}
   - component: {fileID: -7353073030770002280}
+  - component: {fileID: 1839518739604871206}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -268,3 +269,17 @@ TrailRenderer:
   m_Autodestruct: 0
   m_Emitting: 1
   m_ApplyActiveColorSpace: 1
+--- !u!114 &1839518739604871206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7943943492956732614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c757b59c768236349a3ff2d4d5a0504b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 5
+  targetTag: Enemy

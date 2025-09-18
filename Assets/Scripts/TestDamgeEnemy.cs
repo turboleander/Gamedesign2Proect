@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-public class DamageOnKey : MonoBehaviour
+/*public class DamageOnKey : MonoBehaviour
 {
     public KeyCode key = KeyCode.K;
     public float damage = 5f;
@@ -14,6 +15,9 @@ public class DamageOnKey : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(key) && target)
+        {
             target.TakeDamage(damage);
+            Debug.Log($"Enemy take {damage} damage");
+        }
     }
-}
+}*/

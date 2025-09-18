@@ -7,8 +7,8 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Dash Settings")]
     public float dashSpeed = 20f;       // ความเร็ว dash
-    public float dashDuration = 0.2f;   // เวลาที่ dash
-    public float dashCooldown = 1f;     // เวลารอระหว่าง dash
+    public float dashDuration = 0.4f;   // เวลาที่ dash
+    public float dashCooldown = 0.2f;     // เวลารอระหว่าง dash
 
     private bool isDashing = false;
     private bool canDash = true;
@@ -62,13 +62,13 @@ public class PlayerMovement : MonoBehaviour
             moveDirection.y -= gravity * Time.deltaTime;
         }
 
-        if (Input.GetKey(KeyCode.C) && canMove)
+        /*if (Input.GetKey(KeyCode.C) && canMove)
         {
             characterController.height = crouchHeight;
             walkSpeed = crouchSpeed;
             runSpeed = crouchSpeed;
 
-        }
+        }*/
         else
         {
             characterController.height = defaultHeight;
@@ -85,7 +85,7 @@ public class PlayerMovement : MonoBehaviour
             playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
             transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
         }
-        if (Input.GetKeyDown(KeyCode.Q) && canDash && !isDashing)
+        if (Input.GetKeyDown(KeyCode.C) && canDash && !isDashing)
         {
             StartCoroutine(Dash());
         }
