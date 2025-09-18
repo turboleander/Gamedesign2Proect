@@ -1,10 +1,18 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Dash Settings")]
+    public float dashSpeed = 20f;       // ความเร็ว dash
+    public float dashDuration = 0.2f;   // เวลาที่ dash
+    public float dashCooldown = 1f;     // เวลารอระหว่าง dash
+
+    private bool isDashing = false;
+    private bool canDash = true;
+
     public Camera playerCamera;
     public float walkSpeed = 6f;
     public float runSpeed = 12f;
@@ -77,5 +85,39 @@ public class PlayerMovement : MonoBehaviour
             playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
             transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
         }
+        if (Input.GetKeyDown(KeyCode.Q) && canDash && !isDashing)
+        {
+            StartCoroutine(Dash());
+        }
+
     }
+    private IEnumerator Dash()
+    {
+        isDashing = true;
+        canDash = false;
+
+        float startTime = Time.time;
+
+        // ทิศทาง dash = ทิศทางที่ผู้เล่นกำลังเดิน (ถ้าไม่ได้กดปุ่ม → ใช้ forward)
+        Vector3 dashDirection = transform.TransformDirection(Vector3.forward);
+        if (moveDirection.x != 0 || moveDirection.z != 0)
+        {
+            dashDirection = (transform.forward * Input.GetAxis("Vertical") +
+                             transform.right * Input.GetAxis("Horizontal")).normalized;
+        }
+
+        // Dash ช่วงเวลาสั้น ๆ
+        while (Time.time < startTime + dashDuration)
+        {
+            characterController.Move(dashDirection * dashSpeed * Time.deltaTime);
+            yield return null;
+        }
+
+        isDashing = false;
+
+        // รอ cooldown ก่อน dash ได้อีก
+        yield return new WaitForSeconds(dashCooldown);
+        canDash = true;
+    }
+
 }
