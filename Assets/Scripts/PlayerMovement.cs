@@ -1,10 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Player Health")]
+    public int maxHP = 100;
+    public int currentHP;
+    public GameObject deadScreen;
+    private bool hasDead;
+
+    [Header("HP UI")]
+    public Scrollbar healthBar;
+
     [Header("Dash Settings")]
     public float dashSpeed = 20f;       // ความเร็ว dash
     public float dashDuration = 0.4f;   // เวลาที่ dash
@@ -32,62 +42,69 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
+        //Set Character control
         characterController = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        currentHP = maxHP; // Set HP
+        UpdateHealthBar();
     }
 
     void Update()
     {
-        Vector3 forward = transform.TransformDirection(Vector3.forward);
-        Vector3 right = transform.TransformDirection(Vector3.right);
-
-        bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        float curSpeedX = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Vertical") : 0;
-        float curSpeedY = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Horizontal") : 0;
-        float movementDirectionY = moveDirection.y;
-        moveDirection = (forward * curSpeedX) + (right * curSpeedY);
-
-        if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
+        if (!hasDead)
         {
-            moveDirection.y = jumpPower;
-        }
-        else
-        {
-            moveDirection.y = movementDirectionY;
-        }
+            Vector3 forward = transform.TransformDirection(Vector3.forward);
+            Vector3 right = transform.TransformDirection(Vector3.right);
 
-        if (!characterController.isGrounded)
-        {
-            moveDirection.y -= gravity * Time.deltaTime;
-        }
+            bool isRunning = Input.GetKey(KeyCode.LeftShift);
+            float curSpeedX = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Vertical") : 0;
+            float curSpeedY = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Horizontal") : 0;
+            float movementDirectionY = moveDirection.y;
+            moveDirection = (forward * curSpeedX) + (right * curSpeedY);
 
-        /*if (Input.GetKey(KeyCode.C) && canMove)
-        {
-            characterController.height = crouchHeight;
-            walkSpeed = crouchSpeed;
-            runSpeed = crouchSpeed;
+            if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
+            {
+                moveDirection.y = jumpPower;
+            }
+            else
+            {
+                moveDirection.y = movementDirectionY;
+            }
 
-        }*/
-        else
-        {
-            characterController.height = defaultHeight;
-            walkSpeed = 6f;
-            runSpeed = 12f;
-        }
+            if (!characterController.isGrounded)
+            {
+                moveDirection.y -= gravity * Time.deltaTime;
+            }
 
-        characterController.Move(moveDirection * Time.deltaTime);
+            /*if (Input.GetKey(KeyCode.C) && canMove)
+            {
+                characterController.height = crouchHeight;
+                walkSpeed = crouchSpeed;
+                runSpeed = crouchSpeed;
 
-        if (canMove)
-        {
-            rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
-            rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
-            playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
-            transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
-        }
-        if (Input.GetKeyDown(KeyCode.C) && canDash && !isDashing)
-        {
-            StartCoroutine(Dash());
+            }*/
+            else
+            {
+                characterController.height = defaultHeight;
+                walkSpeed = 6f;
+                runSpeed = 12f;
+            }
+
+            characterController.Move(moveDirection * Time.deltaTime);
+
+            if (canMove)
+            {
+                rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
+                rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
+                playerCamera.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
+                transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
+            }
+            if (Input.GetKeyDown(KeyCode.C) && canDash && !isDashing)
+            {
+                StartCoroutine(Dash());
+            }
         }
 
     }
@@ -119,5 +136,31 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
     }
+    public void TakeDamage(int damageAmount)
+    {
+        currentHP -= damageAmount;
 
+        if (currentHP < 0)
+        {
+            deadScreen.SetActive(true);
+            hasDead = true;
+        }
+    }
+    public void AddHP(int HealAmount)
+    {
+        currentHP += HealAmount;
+        if (currentHP > maxHP)
+        {
+            currentHP = maxHP;
+        }
+    }
+
+    void UpdateHealthBar()
+    {
+        if (healthBar != null)
+        {
+            // Scrollbar value อยู่ระหว่าง 0–1
+            healthBar.size = currentHP / maxHP;
+        }
+    }
 }
