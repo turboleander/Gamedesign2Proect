@@ -6,7 +6,7 @@ public class EnemyHealthBar : MonoBehaviour
 {
     [Header("Health")]
     public float maxHealth = 20f;
-    [SerializeField] private float currentHealth;
+    [SerializeField] public float currentHealth;
 
     [Header("World-Space UI")]
     public GameObject healthBarPrefab;
@@ -59,9 +59,14 @@ public class EnemyHealthBar : MonoBehaviour
         if (currentHealth <= 0f)
         {
             Debug.Log($"{name} died");
-            // TODO: ???????????/???????????????????????
+
+            if (barRoot != null)
+            {
+                Destroy(barRoot.gameObject);
+            }
         }
     }
+
 
     public void Heal(float amount)
     {
