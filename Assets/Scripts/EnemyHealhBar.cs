@@ -16,7 +16,7 @@ public class EnemyHealthBar : MonoBehaviour
     public Color bgColor = new Color(0, 0, 0, 0.5f);
     public Color fillColor = new Color(0.2f, 0.85f, 0.2f, 1f);
 
-    private Transform barRoot;    // HealthBarRoot
+    private Transform barRoot;    
     private Canvas canvas;
     private Image fillImage;
     private Camera mainCam;
@@ -36,11 +36,11 @@ public class EnemyHealthBar : MonoBehaviour
 
     void LateUpdate()
     {
-        // ????????????
+        
         if (fillImage && maxHealth > 0f)
             fillImage.fillAmount = Mathf.Clamp01(currentHealth / maxHealth);
 
-        // ???????????????
+        
         if (barRoot)
         {
             if (!mainCam) mainCam = Camera.main;
@@ -52,14 +52,14 @@ public class EnemyHealthBar : MonoBehaviour
         }
     }
 
-    // ---------- Public API ----------
+    
     public void TakeDamage(float amount)
     {
         currentHealth = Mathf.Max(0f, currentHealth - Mathf.Abs(amount));
         if (currentHealth <= 0f)
         {
             Debug.Log($"{name} died");
-            // TODO: ???????????/???????????????????????
+            
         }
     }
 
@@ -71,10 +71,10 @@ public class EnemyHealthBar : MonoBehaviour
     [ContextMenu("Rebuild Now")]
     public void BuildOrRebuild()
     {
-        // ??????????????
+     
         if (barRoot) DestroyImmediate(barRoot.gameObject);
 
-        // ????????
+        
         var root = new GameObject("HealthBarRoot");
         root.transform.SetParent(transform, false);
         root.transform.localPosition = offset;
@@ -84,7 +84,7 @@ public class EnemyHealthBar : MonoBehaviour
 
         if (healthBarPrefab)
         {
-            // ?????????
+           
             canvasGO = Instantiate(healthBarPrefab, barRoot).gameObject;
             canvasGO.name = "Canvas";
             canvas = canvasGO.GetComponent<Canvas>();
@@ -95,7 +95,7 @@ public class EnemyHealthBar : MonoBehaviour
             rect.sizeDelta = barSize;
             rect.localScale = Vector3.one * worldScale;
 
-            // ?? BarFill
+            
             var fillTf = canvasGO.transform.Find("BarFill");
             if (!fillTf)
             {
@@ -114,13 +114,13 @@ public class EnemyHealthBar : MonoBehaviour
                 }
             }
 
-            // ???????? BG ????????
+           
             if (!canvasGO.transform.Find("BarBG"))
                 CreateBG(canvasGO.transform);
         }
         else
         {
-            // ????????? Canvas/BG/Fill ???
+            
             canvasGO = new GameObject("Canvas", typeof(Canvas), typeof(CanvasGroup));
             canvasGO.transform.SetParent(barRoot, false);
             canvas = canvasGO.GetComponent<Canvas>();
@@ -135,7 +135,7 @@ public class EnemyHealthBar : MonoBehaviour
         }
     }
 
-    // ---------- Builders ----------
+ 
     void CreateBG(Transform parent)
     {
         var bgGO = new GameObject("BarBG", typeof(Image));
