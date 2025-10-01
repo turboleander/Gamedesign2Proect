@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using UnityEngine;
 
@@ -8,14 +8,16 @@ public class Weapon : MonoBehaviour
     public Transform bulletSpawn;
     public float bulletVelocity = 30;
     public float bulletPrefabLifeTime = 3f;
+    public bool isFiring;
 
     // Update is called once per frame
     void Update()
     {
         //left mouse click
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (Input.GetKeyDown(KeyCode.Mouse0) )
         {
             FireWeapon();
+            
         }
     }
     private void FireWeapon()
