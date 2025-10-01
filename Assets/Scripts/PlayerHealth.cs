@@ -72,4 +72,6 @@ public class PlayerHealth : MonoBehaviour
 
         // ถ้าอยาก reset game ก็เรียก SceneManager.LoadScene(...)
     }
+
+
 }
