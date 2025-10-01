@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
-  m_Name: Screenshot_2025-10-01_215137
+  m_Name: FPS_Tiles_5_1
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 13c7e49efda007a44874021619c33f1a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0fa8492a6a56600419538309174af8d9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1
