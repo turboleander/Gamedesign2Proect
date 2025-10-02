@@ -26,10 +26,10 @@ public class PlayerMovement : MonoBehaviour
     public float dashCooldown = 0.2f;
 
     [Header("Movement Settings")]
-    public float walkSpeed = 12f;
-    public float runSpeed = 12f;
+    public float walkSpeed = 40f;
+    public float runSpeed = 40f;
     public float jumpPower = 7f;
-    public float gravity = 10f;
+    public float gravity = 20f;
     public float lookSpeed = 2f;
     public float lookXLimit = 85f; // มุมกล้องแกน X
     public float defaultHeight = 2f;
