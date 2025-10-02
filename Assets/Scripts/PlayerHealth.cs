@@ -1,27 +1,27 @@
-using UnityEngine;
+Ôªøusing UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
-    [Header("Player Health")]
     public int maxHP = 100;
     public int currentHP;
 
     [Header("UI")]
-    public Scrollbar healthBar;   // drag Scrollbar ‡¢È“¡“„π Inspector
-    public GameObject deadScreen; // ÀπÈ“µ“¬ (‡™Ëπ Panel)
+    public Slider healthBar;   // ‡πÄ‡∏õ‡∏•‡∏µ‡πà‡∏¢‡∏ô‡∏à‡∏≤‡∏Å Scrollbar ‚Üí Slider
+    public GameObject deadScreen;
 
     private bool isDead = false;
 
     void Start()
     {
         currentHP = maxHP;
-        UpdateHealthBar();
+        if (healthBar != null)
+        {
+            healthBar.maxValue = maxHP;
+            healthBar.value = currentHP;
+        }
     }
 
-    /// <summary>
-    /// √—∫ damage
-    /// </summary>
     public void TakeDamage(int amount)
     {
         if (isDead) return;
@@ -32,13 +32,9 @@ public class PlayerHealth : MonoBehaviour
             currentHP = 0;
             Die();
         }
-
         UpdateHealthBar();
     }
 
-    /// <summary>
-    /// Heal HP
-    /// </summary>
     public void Heal(int amount)
     {
         if (isDead) return;
@@ -53,25 +49,13 @@ public class PlayerHealth : MonoBehaviour
     private void UpdateHealthBar()
     {
         if (healthBar != null)
-        {
-            healthBar.size = (float)currentHP / maxHP;
-        }
+            healthBar.value = currentHP;
     }
 
     private void Die()
     {
         isDead = true;
-
         if (deadScreen != null)
             deadScreen.SetActive(true);
-
-        // disable movement À√◊Õ¬‘ß event
-        var move = GetComponent<PlayerMovement>();
-        if (move != null)
-            move.enabled = false;
-
-        // ∂È“Õ¬“° reset game °Á‡√’¬° SceneManager.LoadScene(...)
     }
-
-
 }
