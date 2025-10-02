@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class DamageOnCollision : MonoBehaviour
 {
-    public float damage = 5f;  // จำนวน damage
+    public float damage = 25f;  // จำนวน damage
     public string targetTag = "Enemy"; // tag ของศัตรู
 
     private void OnCollisionEnter(Collision collision)
