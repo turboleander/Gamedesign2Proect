@@ -59,6 +59,7 @@ public class EnemyHealthBar : MonoBehaviour
         if (currentHealth <= 0f)
         {
             Debug.Log($"{name} died");
+            Destroy(gameObject);
 
             if (barRoot != null)
             {
