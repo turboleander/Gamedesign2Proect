@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class EnemyHealthBar : MonoBehaviour
 {
     [Header("Health")]
-    public float maxHealth = 20f;
+    public float maxHealth = 75f;
     [SerializeField] public float currentHealth;
 
     [Header("World-Space UI")]
