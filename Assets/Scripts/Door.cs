@@ -1,4 +1,7 @@
 ﻿using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class Door : MonoBehaviour
 {
@@ -9,13 +12,17 @@ public class Door : MonoBehaviour
             PlayerInventory inventory = other.GetComponent<PlayerInventory>();
             if (inventory != null && inventory.hasKey)
             {
-                Debug.Log("เปิดประตู!");
-                Destroy(gameObject); // ลบประตูออก
-                Time.timeScale = 0f;
+#if UNITY_EDITOR
+                
+                EditorApplication.isPlaying = false;
+#else
+                // ถ้าเป็น Build จริง จะปิดเกมไปเลย
+                Application.Quit();
+#endif
             }
             else
             {
-                Debug.Log("ต้องการกุญแจเพื่อเปิดประตู!");
+                Debug.Log("ต้องใช้กุญแจก่อนนะ!");
             }
         }
     }
