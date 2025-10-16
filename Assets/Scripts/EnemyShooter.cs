@@ -84,6 +84,17 @@ public class EnemyMovementCircleOnly : MonoBehaviour
             EngageStrafe();
         }
 
+        // 👇 เพิ่มส่วนนี้เพื่อให้ "หันหน้าหา player ตลอดเวลา"
+        if (target)
+        {
+            Vector3 to = Flat(target.position) - Flat(transform.position);
+            if (to.sqrMagnitude > 0.0001f)
+            {
+                var look = Quaternion.LookRotation(to.normalized, Vector3.up);
+                transform.rotation = Quaternion.Euler(0f, look.eulerAngles.y, 0f);
+            }
+        }
+
         if (useGroundSnap)
         {
             GroundSnap();
@@ -107,13 +118,6 @@ public class EnemyMovementCircleOnly : MonoBehaviour
         if (step.magnitude > maxStep) step = step.normalized * maxStep;
 
         cc.Move(step);
-
-        if (faceAlongMove && step.sqrMagnitude > 0.000001f)
-        {
-            Vector3 dir = step.normalized;
-            var look = Quaternion.LookRotation(dir, Vector3.up);
-            transform.rotation = Quaternion.Euler(0f, look.eulerAngles.y, 0f);
-        }
     }
 
     private void EngageStrafe()
@@ -128,16 +132,6 @@ public class EnemyMovementCircleOnly : MonoBehaviour
         Vector3 right = transform.right; right.y = 0f; right.Normalize();
         Vector3 step = right * (strafeDir * strafeSpeed * Time.deltaTime);
         cc.Move(step);
-
-        if (faceTargetWhileStrafing && target)
-        {
-            Vector3 to = Flat(target.position) - Flat(transform.position);
-            if (to.sqrMagnitude > 0.000001f)
-            {
-                var look = Quaternion.LookRotation(to.normalized, Vector3.up);
-                transform.rotation = Quaternion.Euler(0f, look.eulerAngles.y, 0f);
-            }
-        }
     }
 
     private void GroundSnap()
