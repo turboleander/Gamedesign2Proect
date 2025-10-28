@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EnemyBullet : MonoBehaviour
 {
-    public int damage = 10; // กำหนดดาเมจของกระสุน
+    public float damage = 10; // กำหนดดาเมจของกระสุน
 
     private void OnCollisionEnter(Collision collision)
     {
