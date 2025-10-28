@@ -1,17 +1,18 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public int maxHP = 100;
-    public int currentHP;
+    public float maxHP = 100;
+    public float currentHP;
 
     [Header("UI")]
     public Slider healthBar;   // เปลี่ยนจาก Scrollbar → Slider
     public GameObject deadScreen;
 
-    private bool isDead = false;
-
+    public UnityEvent OnTakeDamage;
+    public UnityEvent OnDead;
     void Start()
     {
         currentHP = maxHP;
@@ -24,20 +25,22 @@ public class PlayerHealth : MonoBehaviour
 
     public void TakeDamage(int amount)
     {
-        if (isDead) return;
-
-        currentHP -= amount;
-        if (currentHP <= 0)
+        if (!IsDead())
         {
-            currentHP = 0;
-            Die();
+            OnTakeDamage.Invoke();
+            currentHP -= amount;
+
+            if (IsDead())
+            {
+                Die();
+                OnDead.Invoke();
+            }
         }
-        UpdateHealthBar();
     }
 
     public void Heal(int amount)
     {
-        if (isDead) return;
+        if (IsDead()) return;
 
         currentHP += amount;
         if (currentHP > maxHP)
@@ -54,8 +57,11 @@ public class PlayerHealth : MonoBehaviour
 
     private void Die()
     {
-        isDead = true;
         if (deadScreen != null)
             deadScreen.SetActive(true);
+    }
+    public bool IsDead()
+    {
+        return currentHP <= 0;
     }
 }
