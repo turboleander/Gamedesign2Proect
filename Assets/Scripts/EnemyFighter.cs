@@ -1,26 +1,21 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
-public class EnemyMovementCircleOnly : MonoBehaviour
+public class EnemyMovementFighter : MonoBehaviour
 {
     [Header("Circle Patrol (XZ)")]
     public Transform circleCenter;
     public Vector3 centerOffset = Vector3.zero;
     public float circleRadius = 4f;
     public bool clockwise = false;
-    public float linearSpeed = 3f;
-    public bool faceAlongMove = true;
+    public float patrolSpeed = 3f;
 
-    [Header("Detect / Engage")]
+    [Header("Chase / Engage")]
     public Transform target;
     public bool autoFindTargetByTag = true;
     public string playerTag = "Player";
     public float detectRange = 10f;
-
-    [Header("Strafe (Engage)")]
-    public float strafeSpeed = 2.5f;
-    public float strafeSwitchSeconds = 2f;
-    public bool faceTargetWhileStrafing = true;
+    public float chaseSpeed = 4f;
 
     [Header("Y Handling")]
     public bool useGroundSnap = false;
@@ -36,10 +31,8 @@ public class EnemyMovementCircleOnly : MonoBehaviour
     private Vector3 centerPos;
     private float startY;
     private float theta;
-    private int strafeDir = 1;
-    private float strafeTimer = 0f;
 
-    private enum State { Patrol, Engage }
+    private enum State { Patrol, Chase }
     private State state = State.Patrol;
 
     void Start()
@@ -56,24 +49,13 @@ public class EnemyMovementCircleOnly : MonoBehaviour
         centerPos = (circleCenter ? circleCenter.position : transform.position) + centerOffset;
 
         Vector3 flatToSelf = Flat(transform.position) - Flat(centerPos);
-        if (flatToSelf.sqrMagnitude < 0.0001f)
-        {
-            theta = 0f;
-            Vector3 startOnCircle = Flat(centerPos) + new Vector3(circleRadius, 0f, 0f);
-            SetXZ(startOnCircle);
-        }
-        else
-        {
-            theta = Mathf.Atan2(flatToSelf.z, flatToSelf.x);
-            Vector3 onCircle = Flat(centerPos) + new Vector3(Mathf.Cos(theta), 0f, Mathf.Sin(theta)) * circleRadius;
-            SetXZ(onCircle);
-        }
+        theta = Mathf.Atan2(flatToSelf.z, flatToSelf.x);
     }
 
     void Update()
     {
         bool inRange = target && Vector3.Distance(Flat(transform.position), Flat(target.position)) <= detectRange;
-        state = inRange ? State.Engage : State.Patrol;
+        state = inRange ? State.Chase : State.Patrol;
 
         if (state == State.Patrol)
         {
@@ -81,57 +63,45 @@ public class EnemyMovementCircleOnly : MonoBehaviour
         }
         else
         {
-            EngageStrafe();
-        }
-
-       
-        if (target)
-        {
-            Vector3 to = Flat(target.position) - Flat(transform.position);
-            if (to.sqrMagnitude > 0.0001f)
-            {
-                var look = Quaternion.LookRotation(to.normalized, Vector3.up);
-                transform.rotation = Quaternion.Euler(0f, look.eulerAngles.y, 0f);
-            }
+            ChaseTarget();
         }
 
         if (useGroundSnap)
-        {
             GroundSnap();
-        }
         else if (lockYToStart)
         {
-            var p = transform.position; p.y = startY; transform.position = p;
+            var p = transform.position;
+            p.y = startY;
+            transform.position = p;
         }
     }
 
     private void PatrolCircleXZ()
     {
-        float angularSpeed = (circleRadius > 0.0001f) ? (linearSpeed / circleRadius) : 0f;
+        float angularSpeed = (circleRadius > 0.0001f) ? (patrolSpeed / circleRadius) : 0f;
         if (clockwise) angularSpeed = -angularSpeed;
 
         theta += angularSpeed * Time.deltaTime;
-
         Vector3 desired = Flat(centerPos) + new Vector3(Mathf.Cos(theta), 0f, Mathf.Sin(theta)) * circleRadius;
-        Vector3 step = (desired - Flat(transform.position));
-        float maxStep = linearSpeed * Time.deltaTime;
+        Vector3 step = desired - Flat(transform.position);
+        float maxStep = patrolSpeed * Time.deltaTime;
         if (step.magnitude > maxStep) step = step.normalized * maxStep;
-
         cc.Move(step);
     }
 
-    private void EngageStrafe()
+    private void ChaseTarget()
     {
-        strafeTimer += Time.deltaTime;
-        if (strafeTimer >= strafeSwitchSeconds)
-        {
-            strafeTimer = 0f;
-            strafeDir *= -1;
-        }
+        if (!target) return;
 
-        Vector3 right = transform.right; right.y = 0f; right.Normalize();
-        Vector3 step = right * (strafeDir * strafeSpeed * Time.deltaTime);
-        cc.Move(step);
+        Vector3 toTarget = Flat(target.position) - Flat(transform.position);
+        if (toTarget.sqrMagnitude < 0.01f) return;
+
+        Vector3 dir = toTarget.normalized;
+        cc.Move(dir * chaseSpeed * Time.deltaTime);
+
+        
+        var look = Quaternion.LookRotation(dir, Vector3.up);
+        transform.rotation = Quaternion.Euler(0f, look.eulerAngles.y, 0f);
     }
 
     private void GroundSnap()
@@ -139,18 +109,13 @@ public class EnemyMovementCircleOnly : MonoBehaviour
         Vector3 origin = transform.position + Vector3.up * 0.5f;
         if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, snapRayLength, groundMask))
         {
-            var p = transform.position; p.y = hit.point.y + snapOffset; transform.position = p;
+            var p = transform.position;
+            p.y = hit.point.y + snapOffset;
+            transform.position = p;
         }
     }
 
     private static Vector3 Flat(Vector3 v) => new Vector3(v.x, 0f, v.z);
-
-    private void SetXZ(Vector3 flatPos)
-    {
-        var p = transform.position;
-        p.x = flatPos.x; p.z = flatPos.z;
-        transform.position = p;
-    }
 
     void OnDrawGizmosSelected()
     {
