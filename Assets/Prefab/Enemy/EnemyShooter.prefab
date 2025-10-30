@@ -250,7 +250,6 @@ GameObject:
   - component: {fileID: 2973377821874256656}
   - component: {fileID: 8670204804177562202}
   - component: {fileID: 2264810237062045295}
-  - component: {fileID: 5869994251864086917}
   m_Layer: 0
   m_Name: EnemyShooter
   m_TagString: Enemy
@@ -336,26 +335,6 @@ MonoBehaviour:
   snapOffset: 0
   lockYToStart: 1
   drawCircleGizmo: 1
---- !u!114 &5869994251864086917
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7669827444657797026}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfbeda6ce40b6ab439248c4206b1772f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 75
-  currentHealth: 0
-  healthBarPrefab: {fileID: 0}
-  offset: {x: 0, y: 2.2, z: 0}
-  barSize: {x: 160, y: 18}
-  worldScale: 0.03
-  bgColor: {r: 0, g: 0, b: 0, a: 0.5}
-  fillColor: {r: 0.2, g: 0.85, b: 0.2, a: 1}
 --- !u!1 &9184498467036719075
 GameObject:
   m_ObjectHideFlags: 0
