@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
@@ -16,7 +16,7 @@ public class EnemyHealthBar : MonoBehaviour
     public Color bgColor = new Color(0, 0, 0, 0.5f);
     public Color fillColor = new Color(0.2f, 0.85f, 0.2f, 1f);
 
-    private Transform barRoot;    // HealthBarRoot
+    private Transform barRoot;
     private Canvas canvas;
     private Image fillImage;
     private Camera mainCam;
@@ -29,45 +29,40 @@ public class EnemyHealthBar : MonoBehaviour
     void Start()
     {
         mainCam = Camera.main;
-        if (!mainCam) Debug.LogWarning("[EnemyHealthBar] No Camera.main found. Please tag your main camera as 'MainCamera'.");
+        if (!mainCam)
+            Debug.LogWarning("[EnemyHealthBar] No Camera.main found.");
+
+        // ลบ HealthBarRoot เดิมก่อนสร้างใหม่
+        var existing = transform.Find("HealthBarRoot");
+        if (existing != null)
+            DestroyImmediate(existing.gameObject);
 
         BuildOrRebuild();
     }
 
     void LateUpdate()
     {
-        // ????????????
         if (fillImage && maxHealth > 0f)
             fillImage.fillAmount = Mathf.Clamp01(currentHealth / maxHealth);
 
-        // ???????????????
-        if (barRoot)
+        if (barRoot && mainCam)
         {
-            if (!mainCam) mainCam = Camera.main;
-            if (mainCam)
-            {
-                Vector3 dir = (barRoot.position - mainCam.transform.position).normalized;
-                barRoot.forward = dir;
-            }
+            barRoot.LookAt(mainCam.transform);
+            barRoot.Rotate(0, 180f, 0); // แก้ bar กลับด้าน
         }
     }
 
-    // ---------- Public API ----------
     public void TakeDamage(float amount)
     {
         currentHealth = Mathf.Max(0f, currentHealth - Mathf.Abs(amount));
         if (currentHealth <= 0f)
         {
-            Debug.Log($"{name} died");
-            Destroy(gameObject);
-
             if (barRoot != null)
-            {
                 Destroy(barRoot.gameObject);
-            }
+
+            Destroy(gameObject);
         }
     }
-
 
     public void Heal(float amount)
     {
@@ -77,77 +72,54 @@ public class EnemyHealthBar : MonoBehaviour
     [ContextMenu("Rebuild Now")]
     public void BuildOrRebuild()
     {
-        // ??????????????
-        if (barRoot) DestroyImmediate(barRoot.gameObject);
+        // ลบ HealthBarRoot เดิมอีกครั้งเพื่อความชัวร์
+        if (barRoot != null)
+            DestroyImmediate(barRoot.gameObject);
 
-        // ????????
-        var root = new GameObject("HealthBarRoot");
-        root.transform.SetParent(transform, false);
-        root.transform.localPosition = offset;
-        barRoot = root.transform;
+        // สร้าง HealthBarRoot ใหม่
+        barRoot = new GameObject("HealthBarRoot").transform;
+        barRoot.SetParent(transform, false);
+        barRoot.localPosition = offset;
 
         GameObject canvasGO;
 
         if (healthBarPrefab)
         {
-            // ?????????
             canvasGO = Instantiate(healthBarPrefab, barRoot).gameObject;
             canvasGO.name = "Canvas";
-            canvas = canvasGO.GetComponent<Canvas>();
-            if (!canvas) canvas = canvasGO.AddComponent<Canvas>();
+            canvas = canvasGO.GetComponent<Canvas>() ?? canvasGO.AddComponent<Canvas>();
             canvas.renderMode = RenderMode.WorldSpace;
 
-            var rect = canvasGO.GetComponent<RectTransform>();
-            rect.sizeDelta = barSize;
-            rect.localScale = Vector3.one * worldScale;
-
-            // ?? BarFill
             var fillTf = canvasGO.transform.Find("BarFill");
-            if (!fillTf)
-            {
-                Debug.LogWarning("[EnemyHealthBar] Could not find child 'BarFill' in prefab. Creating one for you.");
-                CreateFill(canvasGO.transform);
-            }
-            else
-            {
-                fillImage = fillTf.GetComponent<Image>();
-                if (!fillImage) fillImage = fillTf.gameObject.AddComponent<Image>();
-                if (fillImage.type != Image.Type.Filled)
-                {
-                    fillImage.type = Image.Type.Filled;
-                    fillImage.fillMethod = Image.FillMethod.Horizontal;
-                    fillImage.fillOrigin = (int)Image.OriginHorizontal.Left;
-                }
-            }
+            if (fillTf) fillImage = fillTf.GetComponent<Image>();
+            else CreateFill(canvasGO.transform);
 
-            // ???????? BG ????????
             if (!canvasGO.transform.Find("BarBG"))
                 CreateBG(canvasGO.transform);
         }
         else
         {
-            // ????????? Canvas/BG/Fill ???
             canvasGO = new GameObject("Canvas", typeof(Canvas), typeof(CanvasGroup));
             canvasGO.transform.SetParent(barRoot, false);
             canvas = canvasGO.GetComponent<Canvas>();
             canvas.renderMode = RenderMode.WorldSpace;
 
-            var rect = canvasGO.GetComponent<RectTransform>();
-            rect.sizeDelta = barSize;
-            rect.localScale = Vector3.one * worldScale;
-
             CreateBG(canvasGO.transform);
             CreateFill(canvasGO.transform);
         }
+
+        var rect = canvasGO.GetComponent<RectTransform>();
+        rect.sizeDelta = barSize;
+        rect.localScale = Vector3.one * worldScale;
     }
 
-    // ---------- Builders ----------
     void CreateBG(Transform parent)
     {
         var bgGO = new GameObject("BarBG", typeof(Image));
         bgGO.transform.SetParent(parent, false);
         var bgImg = bgGO.GetComponent<Image>();
         bgImg.sprite = MakeSolidSprite(bgColor);
+
         var r = bgGO.GetComponent<RectTransform>();
         r.anchorMin = new Vector2(0, 0.5f);
         r.anchorMax = new Vector2(1, 0.5f);
