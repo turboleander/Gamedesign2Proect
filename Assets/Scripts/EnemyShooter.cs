@@ -12,22 +12,21 @@ public class EnemyMovementCircleOnly : MonoBehaviour
     public bool faceAlongMove = true;
 
     [Header("Detect / Engage")]
-    public Transform target;                // เป้าหมาย (Player)
-    public bool autoFindTargetByTag = true; // หาเป้าหมายอัตโนมัติ
-    public string playerTag = "Player";     // Tag ของ Player
+    public Transform target;
+    public bool autoFindTargetByTag = true;
+    public string playerTag = "Player";
     public float detectRange = 10f;
 
     [Header("Attack (Projectile)")]
-    public GameObject projectilePrefab;     // Prefab กระสุน
-    public Transform firePoint;             // จุดยิง
-    public float projectileSpeed = 10f;     // ความเร็วกระสุน
-    public float fireCooldown = 1.5f;       // คูลดาวน์ยิง
+    public GameObject projectilePrefab;
+    public Transform firePoint;
+    public float projectileSpeed = 10f;
+    public float fireCooldown = 1.5f;
     private float nextFireTime = 0f;
 
     [Header("Strafe (Engage)")]
     public float strafeSpeed = 2.5f;
     public float strafeSwitchSeconds = 2f;
-    public bool faceTargetWhileStrafing = true;
 
     [Header("Y Handling")]
     public bool useGroundSnap = false;
@@ -54,14 +53,12 @@ public class EnemyMovementCircleOnly : MonoBehaviour
         cc = GetComponent<CharacterController>();
         startY = transform.position.y;
 
-        // หา Player อัตโนมัติถ้ายังไม่ได้กำหนด
         if (autoFindTargetByTag && target == null)
         {
             var p = GameObject.FindGameObjectWithTag(playerTag);
             if (p) target = p.transform;
         }
 
-        // เริ่มต้นการเดินวงกลม
         centerPos = (circleCenter ? circleCenter.position : transform.position) + centerOffset;
 
         Vector3 flatToSelf = Flat(transform.position) - Flat(centerPos);
@@ -94,7 +91,18 @@ public class EnemyMovementCircleOnly : MonoBehaviour
             TryShoot();
         }
 
-        // จัดการแกน Y
+        // 👇 หันหน้าเข้าหาผู้เล่นตลอดเวลา (ใช้ smooth rotation)
+        if (target)
+        {
+            Vector3 toTarget = Flat(target.position) - Flat(transform.position);
+            if (toTarget.sqrMagnitude > 0.0001f)
+            {
+                Quaternion targetRot = Quaternion.LookRotation(toTarget.normalized, Vector3.up);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * 5f);
+            }
+        }
+
+        // -------------------- จัดการแกน Y --------------------
         if (useGroundSnap) GroundSnap();
         else if (lockYToStart)
         {
@@ -111,23 +119,15 @@ public class EnemyMovementCircleOnly : MonoBehaviour
         if (clockwise) angularSpeed = -angularSpeed;
 
         theta += angularSpeed * Time.deltaTime;
-
         Vector3 desired = Flat(centerPos) + new Vector3(Mathf.Cos(theta), 0f, Mathf.Sin(theta)) * circleRadius;
         Vector3 step = (desired - Flat(transform.position));
         float maxStep = linearSpeed * Time.deltaTime;
         if (step.magnitude > maxStep) step = step.normalized * maxStep;
 
         cc.Move(step);
-
-        if (faceAlongMove && step.sqrMagnitude > 0.000001f)
-        {
-            Vector3 dir = step.normalized;
-            var look = Quaternion.LookRotation(dir, Vector3.up);
-            transform.rotation = Quaternion.Euler(0f, look.eulerAngles.y, 0f);
-        }
     }
 
-    // ----------------- Engage (Strafe + Attack) -----------------
+    // ----------------- Engage -----------------
     private void EngageStrafe()
     {
         strafeTimer += Time.deltaTime;
@@ -140,18 +140,9 @@ public class EnemyMovementCircleOnly : MonoBehaviour
         Vector3 right = transform.right; right.y = 0f; right.Normalize();
         Vector3 step = right * (strafeDir * strafeSpeed * Time.deltaTime);
         cc.Move(step);
-
-        if (faceTargetWhileStrafing && target)
-        {
-            Vector3 to = Flat(target.position) - Flat(transform.position);
-            if (to.sqrMagnitude > 0.000001f)
-            {
-                var look = Quaternion.LookRotation(to.normalized, Vector3.up);
-                transform.rotation = Quaternion.Euler(0f, look.eulerAngles.y, 0f);
-            }
-        }
     }
 
+    // ----------------- Shoot -----------------
     private void TryShoot()
     {
         if (!target || !projectilePrefab || !firePoint) return;
@@ -161,19 +152,15 @@ public class EnemyMovementCircleOnly : MonoBehaviour
             nextFireTime = Time.time + fireCooldown;
 
             GameObject bullet = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-
             Vector3 dir = (target.position - firePoint.position).normalized;
 
             Rigidbody rb = bullet.GetComponent<Rigidbody>();
             if (rb != null)
             {
                 rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
-
-                // เปลี่ยนจาก velocity เป็น linearVelocity
                 rb.linearVelocity = dir * projectileSpeed;
             }
 
-            // ป้องกันชนกับตัว Enemy
             Collider bulletCol = bullet.GetComponent<Collider>();
             Collider shooterCol = GetComponent<Collider>();
             if (bulletCol != null && shooterCol != null)
@@ -183,15 +170,15 @@ public class EnemyMovementCircleOnly : MonoBehaviour
         }
     }
 
-
-
-    // ----------------- Y Handling -----------------
+    // ----------------- Ground Snap -----------------
     private void GroundSnap()
     {
         Vector3 origin = transform.position + Vector3.up * 0.5f;
         if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, snapRayLength, groundMask))
         {
-            var p = transform.position; p.y = hit.point.y + snapOffset; transform.position = p;
+            var p = transform.position;
+            p.y = hit.point.y + snapOffset;
+            transform.position = p;
         }
     }
 
@@ -201,7 +188,8 @@ public class EnemyMovementCircleOnly : MonoBehaviour
     private void SetXZ(Vector3 flatPos)
     {
         var p = transform.position;
-        p.x = flatPos.x; p.z = flatPos.z;
+        p.x = flatPos.x;
+        p.z = flatPos.z;
         transform.position = p;
     }
 
