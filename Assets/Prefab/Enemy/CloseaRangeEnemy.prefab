@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 5411218098647671886}
   - component: {fileID: 3257332163291092857}
   - component: {fileID: 2588894436597822625}
-  - component: {fileID: 661093099942720168}
   - component: {fileID: 3918316351345237351}
+  - component: {fileID: 7271045459468190488}
   m_Layer: 0
   m_Name: CloseaRangeEnemy
   m_TagString: Enemy
@@ -104,11 +104,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7087b795b5165734ca5e39fc932645ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CheckBox: {fileID: 7271045459468190488}
   attackDamage: 25
   attackCooldown: 1.5
   playerTag: Player
---- !u!65 &661093099942720168
-BoxCollider:
+--- !u!114 &3918316351345237351
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1780156807750729522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfbeda6ce40b6ab439248c4206b1772f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 100
+  currentHealth: 0
+  healthBarPrefab: {fileID: 0}
+  offset: {x: 0, y: 1.5, z: 0}
+  barSize: {x: 160, y: 18}
+  worldScale: 0.03
+  bgColor: {r: 0, g: 0, b: 0, a: 0.5}
+  fillColor: {r: 0.2, g: 0.85, b: 0.2, a: 1}
+  potionPrefab: {fileID: 7905848189886672019, guid: 571be145b989038408fa90d57b6fb600, type: 3}
+  potionDropChance: 0.1
+  ammoPrefab: {fileID: 4227719162418077114, guid: bd003a29f793841428c2b8827e9fac35, type: 3}
+  ammoDropChance: 0.1
+--- !u!135 &7271045459468190488
+SphereCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -126,28 +151,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 2, z: 1.5}
+  m_Radius: 2
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &3918316351345237351
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1780156807750729522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfbeda6ce40b6ab439248c4206b1772f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 75
-  currentHealth: 0
-  healthBarPrefab: {fileID: 0}
-  offset: {x: 0, y: 2.2, z: 0}
-  barSize: {x: 160, y: 18}
-  worldScale: 0.03
-  bgColor: {r: 0, g: 0, b: 0, a: 0.5}
-  fillColor: {r: 0.2, g: 0.85, b: 0.2, a: 1}
 --- !u!1 &8299047561338902134
 GameObject:
   m_ObjectHideFlags: 0

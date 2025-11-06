@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 456501153675320726}
   - component: {fileID: 7838185064677585186}
   - component: {fileID: 510916003910692159}
-  - component: {fileID: 5848609150403357742}
   m_Layer: 0
   m_Name: BodyShooter
   m_TagString: Enemy
@@ -110,26 +109,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5848609150403357742
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 699848918719547549}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfbeda6ce40b6ab439248c4206b1772f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  maxHealth: 75
-  currentHealth: 0
-  healthBarPrefab: {fileID: 0}
-  offset: {x: 0, y: 2.2, z: 0}
-  barSize: {x: 160, y: 18}
-  worldScale: 0.03
-  bgColor: {r: 0, g: 0, b: 0, a: 0.5}
-  fillColor: {r: 0.2, g: 0.85, b: 0.2, a: 1}
 --- !u!1 &5320490207346761975
 GameObject:
   m_ObjectHideFlags: 0
@@ -250,6 +229,7 @@ GameObject:
   - component: {fileID: 2973377821874256656}
   - component: {fileID: 8670204804177562202}
   - component: {fileID: 2264810237062045295}
+  - component: {fileID: 2623110829730284046}
   m_Layer: 0
   m_Name: EnemyShooter
   m_TagString: Enemy
@@ -335,6 +315,30 @@ MonoBehaviour:
   snapOffset: 0
   lockYToStart: 1
   drawCircleGizmo: 1
+--- !u!114 &2623110829730284046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7669827444657797026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfbeda6ce40b6ab439248c4206b1772f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 75
+  currentHealth: 0
+  healthBarPrefab: {fileID: 0}
+  offset: {x: 0, y: 1.5, z: 0}
+  barSize: {x: 160, y: 18}
+  worldScale: 0.03
+  bgColor: {r: 0, g: 0, b: 0, a: 0.5}
+  fillColor: {r: 0.2, g: 0.85, b: 0.2, a: 1}
+  potionPrefab: {fileID: 7905848189886672019, guid: 571be145b989038408fa90d57b6fb600, type: 3}
+  potionDropChance: 0.1
+  ammoPrefab: {fileID: 4227719162418077114, guid: bd003a29f793841428c2b8827e9fac35, type: 3}
+  ammoDropChance: 0.1
 --- !u!1 &9184498467036719075
 GameObject:
   m_ObjectHideFlags: 0

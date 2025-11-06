@@ -2,8 +2,12 @@
 
 public class Door : MonoBehaviour
 {
-    public int doorID;           // ประตูหมายเลขอะไร
-    public bool isFinalDoor;     // ถ้า true = ประตูนี้จะจบเกม
+    public int doorID;
+    public bool isFinalDoor;
+
+    // (เพิ่ม) สร้างช่องใน Inspector
+    // ให้ลาก "GameObject ที่เป็นกำแพงประตู" มาใส่ในช่องนี้
+    public GameObject actualDoorObject;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -14,20 +18,24 @@ public class Door : MonoBehaviour
             {
                 Debug.Log("เปิดประตูหมายเลข " + doorID + " สำเร็จ!");
 
-                // ถ้าเป็นประตูสุดท้าย = จบเกม
                 if (isFinalDoor)
                 {
                     Debug.Log("จบเกม!");
-
 #if UNITY_EDITOR
                     UnityEditor.EditorApplication.isPlaying = false;
 #else
-                    Application.Quit();
+                        Application.Quit();
 #endif
                 }
                 else
                 {
-                    // ถ้าไม่ใช่ประตูจบเกม = แค่ลบประตูออกไป
+                    // (แก้ไข) สั่งทำลาย "กำแพงประตู" ที่เราลากมาใส่
+                    if (actualDoorObject != null)
+                    {
+                        Destroy(actualDoorObject);
+                    }
+
+                    // (แนะนำ) ทำลายตัว Trigger เองด้วย
                     Destroy(gameObject);
                 }
             }

@@ -11,7 +11,7 @@ PrefabInstance:
     - target: {fileID: 2228308888529832895, guid: 9e7ae43ef6572a84eb8ea1796bcd1938, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: f4ed5af05896c894296bb3e586dded73, type: 2}
+      objectReference: {fileID: 2100000, guid: 787f2c0821935b748a022febdbe92110, type: 2}
     - target: {fileID: 5897782742006120981, guid: 9e7ae43ef6572a84eb8ea1796bcd1938, type: 3}
       propertyPath: m_Name
       value: AmmoPickup
@@ -64,7 +64,9 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6697942741290514196, guid: 9e7ae43ef6572a84eb8ea1796bcd1938, type: 3}
+    - {fileID: 8700050149045822647, guid: 9e7ae43ef6572a84eb8ea1796bcd1938, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:

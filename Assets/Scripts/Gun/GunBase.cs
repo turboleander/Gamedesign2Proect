@@ -8,7 +8,7 @@ public class GunBase : MonoBehaviour
 
     [Header("Gun Settings")]
     public string gunName = "DefaultGun";
-    public int maxAmmo = 30;
+    public int maxAmmo = 50;
     public int currentAmmo;
 
     [Header("Bullet Settings")]

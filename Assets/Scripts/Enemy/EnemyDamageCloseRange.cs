@@ -3,6 +3,9 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class EnemyDamageCloseRange : MonoBehaviour
 {
+    [Header("Collider")]
+    public Collider CheckBox;
+
     [Header("Attack Settings")]
     public float attackDamage = 10f;        // ดาเมจต่อครั้ง
     public float attackCooldown = 1.5f;     // เวลาระหว่างการโจมตี
@@ -12,16 +15,16 @@ public class EnemyDamageCloseRange : MonoBehaviour
 
     private float lastAttackTime = 0f;
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerStay(Collider CheckBox)
     {
         // ถ้า Collider ที่เข้ามาคือ Player
-        if (other.CompareTag(playerTag))
+        if (CheckBox.CompareTag(playerTag))
         {
             // ตรวจสอบ cooldown ไม่ให้ตีถี่เกินไป
             if (Time.time >= lastAttackTime + attackCooldown)
             {
                 // หา component PlayerHealth แล้วทำดาเมจ
-                PlayerHealth playerHealth = other.GetComponent<PlayerHealth>();
+                PlayerHealth playerHealth = CheckBox.GetComponent<PlayerHealth>();
 
                 if (playerHealth != null && !playerHealth.IsDead())
                 {
@@ -36,9 +39,9 @@ public class EnemyDamageCloseRange : MonoBehaviour
     }
 
     // แสดงขอบเขต collider ใน Scene เพื่อดูง่ายขึ้น
-    private void OnDrawGizmos()
+    /*private void OnDrawGizmos()
     {
         Gizmos.color = new Color(1, 0, 0, 0.3f);
         Gizmos.DrawCube(transform.position, GetComponent<Collider>().bounds.size);
-    }
+    }*/
 }
