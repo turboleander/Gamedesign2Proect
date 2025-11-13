@@ -2,21 +2,22 @@
 
 public class AmmoPickup : MonoBehaviour
 {
+    public int ammoAmount = 30; // จำนวนที่จะเพิ่ม ให้แก้ตามต้องการ
+
     private void OnTriggerEnter(Collider other)
     {
         GunBase gun = other.GetComponentInChildren<GunBase>();
         if (gun != null)
         {
-            // เติม currentAmmo ให้เต็ม
-            gun.currentAmmo = gun.maxAmmo;
+            // บวกกระสุนเพิ่มเข้าไป
+            gun.currentAmmo += ammoAmount;
 
-            // อัพเดต UI 
-            if (gun.ammoDisplay != null)
-                gun.ammoDisplay.text = gun.currentAmmo + " / " + gun.maxAmmo;
+            // ให้ GunBase อัพเดต UI เอง
+            gun.SendMessage("UpdateAmmoUI", SendMessageOptions.DontRequireReceiver);
 
-            Debug.Log("Picked up ammo! " + gun.gunName + " refilled.");
+            Debug.Log($"Picked up ammo! {gun.gunName} +{ammoAmount} ammo.");
 
-            Destroy(gameObject); // pickup หายไป
+            Destroy(gameObject); // ทำลาย pickup
         }
     }
 }

@@ -1,14 +1,14 @@
 ﻿using System.Collections;
 using UnityEngine;
-using TMPro; // ต้องใส่นี้
+using TMPro;
 
 public class GunBase : MonoBehaviour
 {
-    public TMP_Text ammoDisplay; // เปลี่ยนจาก Text เป็น TMP_Text
+    public TMP_Text ammoDisplay;
 
     [Header("Gun Settings")]
     public string gunName = "DefaultGun";
-    public int maxAmmo = 50;
+    public int maxAmmo = 30;
     public int currentAmmo;
 
     [Header("Bullet Settings")]
@@ -21,7 +21,7 @@ public class GunBase : MonoBehaviour
     {
         currentAmmo = maxAmmo;
 
-        // อัพเดต UI ตอนเริ่มเกม
+        // UI เริ่มต้นจะเป็น "Ammo 30"
         UpdateAmmoUI();
     }
 
@@ -30,7 +30,7 @@ public class GunBase : MonoBehaviour
         if (currentAmmo > 0)
         {
             currentAmmo--;
-            Debug.Log("Shoot with " + gunName + " (" + currentAmmo + "/" + maxAmmo + ")");
+            Debug.Log($"Shoot with {gunName} ({currentAmmo})");
 
             if (bulletPrefab != null && bulletSpawn != null)
             {
@@ -42,18 +42,28 @@ public class GunBase : MonoBehaviour
                 StartCoroutine(DestroyBulletAfterTime(bullet, bulletLifeTime));
             }
 
-            UpdateAmmoUI(); // อัพเดต UI หลังยิง
+            UpdateAmmoUI();
         }
         else
         {
-            Debug.Log(gunName + " is out of ammo!");
+            Debug.Log($"{gunName} is out of ammo!");
         }
+    }
+
+    public void AddAmmo(int amount)
+    {
+        currentAmmo += amount;
+
+        // ถ้าต้องการไม่ให้มี max ammo limit ก็ไม่ต้องเช็ค
+        // ถ้าต้องการ limit ค่อยใส่เพิ่มได้
+
+        UpdateAmmoUI();
     }
 
     private void UpdateAmmoUI()
     {
         if (ammoDisplay != null)
-            ammoDisplay.text = currentAmmo + " / " + maxAmmo;
+            ammoDisplay.text = $"Ammo {currentAmmo}";
     }
 
     private IEnumerator DestroyBulletAfterTime(GameObject bullet, float time)
