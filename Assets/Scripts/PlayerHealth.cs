@@ -8,11 +8,14 @@ public class PlayerHealth : MonoBehaviour
     public float currentHP;
 
     [Header("UI")]
-    public Slider healthBar;   // เปลี่ยนจาก Scrollbar → Slider
+    public Slider healthBar;
     public GameObject deadScreen;
+
+
 
     public UnityEvent OnTakeDamage;
     public UnityEvent OnDead;
+
     void Start()
     {
         currentHP = maxHP;
@@ -59,7 +62,12 @@ public class PlayerHealth : MonoBehaviour
     {
         if (deadScreen != null)
             deadScreen.SetActive(true);
+
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
+
     public bool IsDead()
     {
         return currentHP <= 0;
