@@ -354592,6 +354592,10 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 3666582277435069702, guid: a24193cf28c14ce4bb1cb4923c1e663a, type: 3}
+      propertyPath: isFinalDoor
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3666582277435069702, guid: a24193cf28c14ce4bb1cb4923c1e663a, type: 3}
       propertyPath: actualDoorObject
       value: 
       objectReference: {fileID: 23219898}
