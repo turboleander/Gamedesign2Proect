@@ -5,9 +5,12 @@ public class Door : MonoBehaviour
     public int doorID;
     public bool isFinalDoor;
 
-    // (เพิ่ม) สร้างช่องใน Inspector
-    // ให้ลาก "GameObject ที่เป็นกำแพงประตู" มาใส่ในช่องนี้
-    public GameObject actualDoorObject;
+    [Header("Door Object")]
+    public GameObject actualDoorObject; // กำแพงประตู
+
+    [Header("UI Settings")]
+    // (เพิ่ม) ช่องสำหรับลากหน้าจอ Win Screen มาใส่
+    public GameObject winScreenUI;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -20,29 +23,46 @@ public class Door : MonoBehaviour
 
                 if (isFinalDoor)
                 {
-                    Debug.Log("จบเกม!");
-#if UNITY_EDITOR
-                    UnityEditor.EditorApplication.isPlaying = false;
-#else
-                        Application.Quit();
-#endif
+                    // === ส่วนที่แก้ไข: เรียกหน้าจอชนะ ===
+                    WinGame();
                 }
                 else
                 {
-                    // (แก้ไข) สั่งทำลาย "กำแพงประตู" ที่เราลากมาใส่
+                    // เปิดประตูธรรมดา
                     if (actualDoorObject != null)
                     {
                         Destroy(actualDoorObject);
                     }
-
-                    // (แนะนำ) ทำลายตัว Trigger เองด้วย
-                    Destroy(gameObject);
+                    Destroy(gameObject); // ทำลาย Trigger ทิ้ง
                 }
             }
             else
             {
                 Debug.Log("ต้องใช้กุญแจหมายเลข " + doorID + " เพื่อเปิดประตูนี้!");
             }
+        }
+    }
+
+    void WinGame()
+    {
+        Debug.Log("YOU WIN!");
+
+        if (winScreenUI != null)
+        {
+            // 1. เปิดหน้าจอชนะ
+            winScreenUI.SetActive(true);
+
+            // 2. หยุดเวลาในเกม (ศัตรูจะหยุดเดิน, ปืนจะยิงไม่ได้)
+            Time.timeScale = 0f;
+
+            // 3. ปลดล็อกเมาส์ (สำคัญมากสำหรับเกม FPS)
+            // เพื่อให้ผู้เล่นเอาเมาส์ไปกดปุ่ม Restart หรือ Menu ได้
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            Debug.LogError("อย่าลืมลาก Win Screen UI มาใส่ใน Inspector ของประตูด้วยนะครับ!");
         }
     }
 }
